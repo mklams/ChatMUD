@@ -1,8 +1,9 @@
-import React, {useState, useEffect, ChangeEvent} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {socket} from '../socket';
 import TextInput from './TextInput';
 
 export default function ChatWindow(){
+    const bottomRef = useRef<HTMLDivElement>(null);
     const [messages, setMessages] = useState<string[]>([]);
     
     useEffect(() => {
@@ -13,6 +14,11 @@ export default function ChatWindow(){
         };
       }, []);
 
+    useEffect(() => {
+        // scroll to bottom every time messages change
+        bottomRef.current?.scrollIntoView({behavior: 'smooth'})
+    }, [messages]);
+
     const onGetChatMessage = (msg: string) => {
         setMessages(oldMessages => [
           ...oldMessages,
@@ -21,16 +27,19 @@ export default function ChatWindow(){
        
       } 
 
-      const showMessages = () =>{
+    const showMessages = () =>{
         return messages.map((message) => {
-          return <li>{message}</li>
+            return <li>{message}</li>
         })
-      }
+    }
 
     return (
         <div>
-          <ul id="messages">{showMessages()}</ul>
+            <div>
+                <ul id="messages">{showMessages()}</ul>
+                <div ref={bottomRef} />
+            </div>
             <TextInput />
         </div>
-        );
+    );
 }

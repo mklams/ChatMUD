@@ -12,10 +12,11 @@ const users = require('./users');
 const parser = require('./commandParser');
 
 io.on('connection', (socket) => {
+  socket.join("main room");
   users.setUsername(socket.id, socket.id);
   socket.on('chat message', (msg) => {
-    const broadcastMsg = parser.parseMessage(msg, socket);
-    io.emit('chat message', broadcastMsg);
+    const parsedMessage = parser.parseMessage(msg, socket);
+    io.to(parsedMessage.receiver).emit('chat message', parsedMessage.response);
   })
 })
 

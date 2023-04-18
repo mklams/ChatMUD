@@ -1,16 +1,23 @@
-const users = require('./users'); 
+const commands = require('./commands'); 
 
 module.exports = {
     parseMessage: function (msg, socket) {
         const words = msg.split(" ");
-        if(words.length > 1){
-            if(words[0] === "setUsername"){
-                const newUsername = words[1];
-                users.setUsername(socket.id, newUsername);
-                return `User ${socket.id} is now ${newUsername}`;  
+        if(words.length < 1){
+            return {
+                response: "Input must be of <action> <description>",
+                receiver: socket.io
             }
         }
-        const userName = users.getUsername(socket.id);
-        return userName + ": " + msg; 
+        const command = commands.getCommand(words[0]);
+
+        if(command == null){
+            return {
+                response: "Invalid command",
+                receiver: socket.io
+            }
+        }
+
+        return command.action(words[1],socket);
     }
 };
