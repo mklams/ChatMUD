@@ -20,6 +20,10 @@ io.on('connection', (socket) => {
   })
 })
 
+io.on('disconnection', (socket) => {
+  console.log("disconnect" + socket.id)
+})
+
 var port = process.env.PORT || 3000;
 
 server.listen(port, () => {

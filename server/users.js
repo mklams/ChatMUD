@@ -6,5 +6,14 @@ module.exports = {
     },
     getUsername: function (id) {
       return userNames[id] ?? "unknown";
+    },
+    getId: function (name){
+      for(var id in userNames)
+      {
+        if(userNames[id] == name){
+          return id;
+        }
+      }
+      return null;
     }
   };

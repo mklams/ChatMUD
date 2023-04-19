@@ -1,7 +1,7 @@
 const users = require('./users'); 
 
 const setUsername = {
-    names: ["setUsername","setName"],
+    names: ["setusername","setname"],
     action: (details, socket) => {
         users.setUsername(socket.id, details);
         return {
@@ -24,12 +24,14 @@ const speak = {
 }
 
 const speakTo = {
-    names: ["speakTo","talkTo","sayTo"],
+    names: ["speakto","talkto","sayto"],
     action: (details, socket) => {
+        const [receiverName, ...splitMessage] = details.split(" ");
         const userName = users.getUsername(socket.id);
+        const receiverId = users.getId(receiverName);
         return {
-            response: userName + ": " + details,
-            receiver: "main room"
+            response: userName + ": (private)  " + splitMessage.join(" "),
+            receiver: receiverId
         }
     }
 }
@@ -44,12 +46,12 @@ const help = {
     }
 }
 
-const commands = [setUsername, speak, help];
+const commands = [setUsername, speak, speakTo, help];
 
 module.exports ={
     getCommand: function(name){
         for(const command of commands){
-            if(command.names.includes(name)){
+            if(command.names.includes(name.toLowerCase())){
                 return command;
             }
         }
