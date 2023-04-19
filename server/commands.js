@@ -13,7 +13,7 @@ const setUsername = {
 }
 
 const speak = {
-    names: ["speak","talk","say"],
+    names: ["speak","talk","say","s"],
     action: (details, socket) => {
         const userName = users.getUsername(socket.id);
         return {
@@ -41,6 +41,17 @@ const help = {
     action: (details, socket) => {
         return {
             response: "Enter a command in the form <action> <description>",
+            receiver: socket.id
+        }
+    }
+}
+
+const move = {
+    names: ["move","m","go"],
+    action: (details, socket) => {
+        // TODO: parse details and move actor
+        return {
+            response: "You moved",
             receiver: socket.id
         }
     }
