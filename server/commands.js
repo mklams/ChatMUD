@@ -1,4 +1,4 @@
-const users = require('./users'); 
+const users = require('./game/players'); 
 
 const setUsername = {
     names: ["setusername","setname"],
