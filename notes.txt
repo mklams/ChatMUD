@@ -1,0 +1,10 @@
+Front-end
+
+Grammer inspiration:
+https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
+
+Parser inspiration:
+https://gymconsole.app/blog/create-command-parser
+
+Theme inspiration:
+http://backrooms-wiki.wikidot.com/normal-levels-i#toc4

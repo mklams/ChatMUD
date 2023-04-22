@@ -57,7 +57,37 @@ const move = {
     }
 }
 
-const commands = [setUsername, speak, speakTo, help];
+const look = {
+    names: ["look","l","what"],
+    action: (details, socket) => {
+        return {
+            response: "Nothing to see here",
+            receiver: socket.id
+        }
+    }
+}
+
+const run = {
+    names: ["run","r"],
+    action: (details, socket) => {
+        return {
+            response: "Run away!",
+            receiver: socket.id
+        }
+    }
+}
+
+const noclip = {
+    names: ["noclip","nc","clip"],
+    action: (details, socket) => {
+        return {
+            response: "There's no where to clip here",
+            receiver: socket.id
+        }
+    }
+}
+
+const commands = [setUsername, speak, speakTo, help, move, look, run, noclip];
 
 module.exports ={
     getCommand: function(name){

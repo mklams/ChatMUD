@@ -5,6 +5,12 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "nodemon": "^2.0.22",
     "socket.io": "^4.6.1"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "PORT=8000 node index.js",
+    "server": "PORT=8000 nodemon index.js"
   }
 }

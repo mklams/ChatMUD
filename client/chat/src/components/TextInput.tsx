@@ -1,5 +1,6 @@
 import React, {useState, useEffect, ChangeEvent} from 'react';
 import {socket} from '../socket';
+import styled from 'styled-components'
 
 export default function TextInput(){
     const [userInput, setUserInput] = useState("");
@@ -15,9 +16,23 @@ export default function TextInput(){
       }
 
     return(
-        <form id="form" onSubmit={sendMessage}>
-        <input id="input" value ={userInput} onChange={handleUserInput} autoComplete="off"/>
-        <button>Send</button>
-      </form>  
+      <TextForm onSubmit={sendMessage}>
+        <KeyboardInput id="input" value ={userInput} onChange={handleUserInput} autoComplete="off"/>
+        <SendBtn>Send</SendBtn>
+      </TextForm>  
     )
 }
+
+const TextForm = styled.form`
+  background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); 
+`
+
+const KeyboardInput = styled.input`
+  border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem;
+
+  :focus { outline: none; }
+`
+
+const SendBtn = styled.button`
+  background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; 
+`

@@ -11,6 +11,8 @@ const io = new Server(server, {cors:{origin:"http://localhost:3000"}});
 const users = require('./users'); 
 const parser = require('./commandParser');
 
+app.use('/images', express.static('images'));
+
 io.on('connection', (socket) => {
   socket.join("main room");
   users.setUsername(socket.id, socket.id);
