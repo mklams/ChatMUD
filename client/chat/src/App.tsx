@@ -30,6 +30,7 @@ const Game = styled.div`
   flex-direction: column;
   height: 100vh;
   background-color: #211c26;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 `
 
 const Display = styled.div`
