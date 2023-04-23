@@ -9,21 +9,8 @@ const { Server } = require("socket.io");
 const io = new Server(server, {cors:{origin:"http://localhost:3000"}});
 app.use('/images', express.static('images'));
 
-const Game = require('./game/main');
-const game = new Game();
-
-io.on('connection', (socket) => {
-  socket.join("main room");
-  game.addPlayer(socket.id, socket.id);
-  socket.on('chat message', (msg) => {
-    const parsedMessage = game.handleInput(msg, socket);
-    io.to(parsedMessage.receiver).emit('chat message', parsedMessage.response);
-  })
-})
-
-io.on('disconnection', (socket) => {
-  console.log("disconnect" + socket.id)
-})
+const Game = require('./game/game');
+const game = new Game(io);
 
 var port = process.env.PORT || 8000;
 

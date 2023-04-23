@@ -1,12 +1,13 @@
 const commands = require('./commands'); 
 
 class CommandParser{
-    parseMessage(msg, socket, players) {
+    parseMessage(msg, socket) {
         const [action, ...description] = msg.split(" ");
         if(!action){
             return {
                 response: "Input must be of <action> <description>",
-                receiver: socket.io
+                receiver: socket.io,
+                error: true
             }
         }
         const command = this.getCommand(action);
@@ -14,11 +15,18 @@ class CommandParser{
         if(command == null){
             return {
                 response: "Invalid command",
-                receiver: socket.io
+                receiver: socket.io,
+                error: true
             }
         }
 
-        return command.action(description.join(" "),socket, players);
+        command.description = description.join(" ");
+
+        return command;
+    }
+
+    isCommandName(commandName, command){
+        return command.names.includes(commandName);
     }
 
     getCommand(name){

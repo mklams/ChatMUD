@@ -1,13 +1,20 @@
 class Players{
   playerNames = {};
 
-  setUsername(id, name) {
-    this.playerNames[id] = name;
+  addPlayer(id, name) {
+    const newPlayer = new Player(id, name);
+    this.playerNames[id] = newPlayer;
+    return newPlayer;
   }
 
-  getUsername (id) {
-    return this.playerNames[id] ?? "unknown";
+  getPlayer(id) {
+    return this.playerNames[id];
   }
+
+  getPlayerName (id) {
+    return this.playerNames[id];
+  }
+
   getId(name){
     for(var id in this.playerNames)
     {
@@ -16,6 +23,17 @@ class Players{
       }
     }
     return null;
+  }
+}
+
+class Player{
+  constructor(id, name){
+    this.id = id;
+    this.name = name;
+    this.location = {
+      level: 0,
+      room: 0
+    }
   }
 }
 

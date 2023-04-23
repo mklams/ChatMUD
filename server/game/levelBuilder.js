@@ -1,3 +1,6 @@
+const level0 = require('./levels/level0')
+const levelsJson = [level0];
+
 class Level {
     rooms = new Map();
     constructor(levelJson){
@@ -6,40 +9,15 @@ class Level {
             this.rooms.set(room.Id, room);
         }
     }
+
+    getRoom = (roomId) => {
+        this.rooms.get(roomId);
+    }
 }
 
-module.exports = Level;
+const Levels = levelsJson.map((levelJson) => {
+    return new Level(levelJson);
+})
 
-// TODO: Move levels to own folder. 1 file for each level
-const level0 = {
-    "rooms": [
-        {
-            "Id": "1",
-            "Type": 'room',
-            "ConnectedTo": ["2"],
-            "Description": "The room is a maddening mono-yellow and the carpet is unplesently moist. It's hard to think over the hum-buzz of the fluorescent lights."
-        },
-        {
-            "Id": "2",
-            "Type":"room",
-            "ConnectedTo": ["3","4"],
-        },
-        {
-            "Id": "3",
-            "Type": "monster",
-            "ConnectedTo": ["2"],
-        },
-        {
-            "Id": "4",
-            "Type": "end",
-            "ConnectedTo": ["2"],
-        }
-    ]
-}
+module.exports = Levels;
 
-const map = 
-[
-    1,
-    2,3,
-    4
-]

@@ -1,9 +1,16 @@
-const setUsername = {
-    names: ["setusername","setname"],
+const setPlayerName = {
+    names: ["setplayername","setname"],
     action: (details, socket, players) => {
-        players.setUsername(socket.id, details);
+        if(players.getId(details)){
+            return {
+                error: true,
+                response: "Name already taken.",
+                receiver: socket.id
+            }
+        }
+        players.setPlayerName(socket.id, details);
         return {
-            response: `User ${socket.id} is now ${details}`,
+            response: `Player ${details} has joined the backrooms.`,
             receiver: "main room"
         }
 
@@ -13,7 +20,7 @@ const setUsername = {
 const speak = {
     names: ["speak","talk","say","s"],
     action: (details, socket, players) => {
-        const userName = players.getUsername(socket.id);
+        const userName = players.getPlayerName(socket.id);
         return {
             response: userName + ": " + details,
             receiver: "main room"
@@ -25,7 +32,7 @@ const speakTo = {
     names: ["speakto","talkto","sayto"],
     action: (details, socket, players) => {
         const [receiverName, ...splitMessage] = details.split(" ");
-        const userName = players.getUsername(socket.id);
+        const userName = players.getPlayerName(socket.id);
         const receiverId = players.getId(receiverName);
         return {
             response: userName + ": (private)  " + splitMessage.join(" "),
@@ -85,6 +92,6 @@ const noclip = {
     }
 }
 
-const commands = [setUsername, speak, speakTo, help, move, look, run, noclip];
+const commands = [setPlayerName, speak, speakTo, help, move, look, run, noclip];
 
 module.exports = commands;
