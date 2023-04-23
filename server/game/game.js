@@ -1,4 +1,4 @@
-const Players = require('./players');
+const { Players, Player } = require('./players');
 const CommandParser = require('../commandParser');
 const Levels = require('./levelBuilder');
 
@@ -26,17 +26,15 @@ class Game{
     }
 
     onUserJoin = (socket) => {
-        socket.join("main room"); // TODO: Have user join on Level0
-        socket.emit('chat message', "Welcome to the backrooms. Use the command setPlayerName <name> to set your name.")
-        //game.addPlayer(socket.id, socket.id);
-      }
+        socket.emit('chat message', "You decided to come here? That was an unfortunate decision. Well, what's your name? (Use the command setPlayerName <your name> to set your name.)")
+    }
 
     addPlayer = (id, name) => {
         this.players.addPlayer(id, name);
     }
 
     isNewPlayer = (socket) => {
-        return this.players.getPlayerName(socket.id);
+        return !this.players.doesPlayerExist(socket.id);
     }
 
     handleInput = (input, socket) => {
@@ -45,30 +43,34 @@ class Game{
         if ( command.error ) { return command; }
 
         if(this.isNewPlayer(socket)) {
-            this.outputMessage(this.isNewPlayer(socket), socket.id);
+            
             return this.addNewPlayer(command, socket)
         }
 
-        return command.action(command.description,socket, this.players);
+        return command.action(command.description, socket, this.players);
     }
 
     addNewPlayer = (command, socket) => {
         if ( command.error ) { return command; } // command is already bad
         if(!this.parser.isCommandName("setplayername", command)){
             return {
-                response: "Before you can be lost forever you must first set your name. User the command setPlayerName <name>.",
+                response: "I need to know your name so I can forget you once you're lost. (Use the command setPlayerName <your name>.)",
                 receiver: socket.id,
                 error: true
             }
         }
+
         const outcome = command.action(command.description, socket, this.players); // call command setPlayerName
         if(outcome.error){ return outcome; }
 
         //start game for user
         const player = this.players.getPlayer(socket.id);
+        this.outputMessage(`Welcome ${player.name} to Level 0! You can stay in this unpleasant level or try to find a room you can ~noclip~ in.`, player.id)
+        
         const currentLevel = Levels[player.location.level];
         const currentRoom = currentLevel.getRoom(player.location.room);
-
+        socket.join("level0"); // TODO: have user join based on actual level
+        
         return {
             response: currentRoom.description,
             receiver: player.id,

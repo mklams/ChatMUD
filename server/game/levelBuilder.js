@@ -6,12 +6,12 @@ class Level {
     constructor(levelJson){
         this.level = JSON.parse(levelJson);
         for(const room of this.level.rooms){
-            this.rooms.set(room.Id, room);
+            this.rooms.set(room.id, room);
         }
     }
 
     getRoom = (roomId) => {
-        this.rooms.get(roomId);
+        return this.rooms.get(String(roomId));
     }
 }
 

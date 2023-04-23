@@ -11,6 +11,10 @@ class Players{
     return this.playerNames[id];
   }
 
+  doesPlayerExist(id){
+    return !!this.playerNames[id];
+  }
+
   getPlayerName (id) {
     return this.playerNames[id];
   }
@@ -37,4 +41,4 @@ class Player{
   }
 }
 
-module.exports = Players;
+module.exports = { Players, Player };

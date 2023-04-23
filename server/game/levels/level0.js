@@ -1,25 +1,25 @@
 const level0 = {
     "rooms": [
         {
-            "Id": "1",
-            "Type": 'room',
-            "ConnectedTo": ["2"],
-            "Description": "The room is a maddening mono-yellow and the carpet is unplesently moist. It's hard to think over the hum-buzz of the fluorescent lights."
+            "id": "0",
+            "type": 'room',
+            "connectedTo": ["1"],
+            "description": "The room is a maddening mono-yellow and the carpet is unplesently moist. It's hard to think over the hum-buzz of the fluorescent lights."
         },
         {
-            "Id": "2",
-            "Type":"room",
-            "ConnectedTo": ["3","4"],
+            "id": "1",
+            "type":"room",
+            "connectedTo": ["2","3"],
         },
         {
-            "Id": "3",
-            "Type": "monster",
-            "ConnectedTo": ["2"],
+            "id": "2",
+            "type": "monster",
+            "connectedTo": ["1"],
         },
         {
-            "Id": "4",
-            "Type": "end",
-            "ConnectedTo": ["2"],
+            "id": "3",
+            "type": "end",
+            "connectedTo": ["1"],
         }
     ]
 }

@@ -1,5 +1,9 @@
+const {Players, Player } = require('./game/players')
+
+// TODO: Pass in args for action parameters
+
 const setPlayerName = {
-    names: ["setplayername","setname"],
+    names: ["setplayername","setname","sn"],
     action: (details, socket, players) => {
         if(players.getId(details)){
             return {
@@ -8,7 +12,7 @@ const setPlayerName = {
                 receiver: socket.id
             }
         }
-        players.setPlayerName(socket.id, details);
+        players.addPlayer(socket.id, details);
         return {
             response: `Player ${details} has joined the backrooms.`,
             receiver: "main room"

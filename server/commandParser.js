@@ -6,7 +6,7 @@ class CommandParser{
         if(!action){
             return {
                 response: "Input must be of <action> <description>",
-                receiver: socket.io,
+                receiver: socket.id,
                 error: true
             }
         }
@@ -15,7 +15,7 @@ class CommandParser{
         if(command == null){
             return {
                 response: "Invalid command",
-                receiver: socket.io,
+                receiver: socket.id,
                 error: true
             }
         }
