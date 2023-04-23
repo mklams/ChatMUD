@@ -7,18 +7,16 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {cors:{origin:"http://localhost:3000"}});
+app.use('/images', express.static('images'));
 
 const Game = require('./game/main');
 const game = new Game();
-const parser = require('./commandParser');
-
-app.use('/images', express.static('images'));
 
 io.on('connection', (socket) => {
   socket.join("main room");
   game.addPlayer(socket.id, socket.id);
   socket.on('chat message', (msg) => {
-    const parsedMessage = parser.parseMessage(msg, socket);
+    const parsedMessage = game.handleInput(msg, socket);
     io.to(parsedMessage.receiver).emit('chat message', parsedMessage.response);
   })
 })
