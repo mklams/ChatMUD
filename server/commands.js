@@ -4,7 +4,8 @@ const {Players, Player } = require('./game/players')
 
 const setPlayerName = {
     names: ["setplayername","setname","sn"],
-    action: (details, socket, players) => {
+    action: (args) => {
+        const  {details, socket, players} = args;
         if(players.getId(details)){
             return {
                 error: true,
@@ -23,7 +24,8 @@ const setPlayerName = {
 
 const speak = {
     names: ["speak","talk","say","s"],
-    action: (details, socket, players) => {
+    action: (args) => {
+        const  {details, socket, players} = args;
         const userName = players.getPlayerName(socket.id);
         return {
             response: userName + ": " + details,
@@ -34,7 +36,8 @@ const speak = {
 
 const speakTo = {
     names: ["speakto","talkto","sayto"],
-    action: (details, socket, players) => {
+    action: (args) => {
+        const  {details, socket, players} = args;
         const [receiverName, ...splitMessage] = details.split(" ");
         const userName = players.getPlayerName(socket.id);
         const receiverId = players.getId(receiverName);
@@ -47,7 +50,8 @@ const speakTo = {
 
 const help = {
     names: ["help","?"],
-    action: (details, socket, players) => {
+    action: (dargs) => {
+        const  {details, socket, players} = args;
         return {
             response: "Enter a command in the form <action> <description>",
             receiver: socket.id
@@ -57,8 +61,9 @@ const help = {
 
 const move = {
     names: ["move","m","go"],
-    action: (details, socket, players) => {
+    action: (args) => {
         // TODO: parse details and move actor
+        const  {details, socket, players} = args;
         return {
             response: "You moved",
             receiver: socket.id
@@ -68,7 +73,8 @@ const move = {
 
 const look = {
     names: ["look","l","what"],
-    action: (details, socket, players) => {
+    action: (args) => {
+        const  {details, socket, players} = args;
         return {
             response: "Nothing to see here",
             receiver: socket.id
@@ -78,7 +84,8 @@ const look = {
 
 const run = {
     names: ["run","r"],
-    action: (details, socket, players) => {
+    action: (dargs) => {
+        const  {details, socket, players} = args;
         return {
             response: "Run away!",
             receiver: socket.id
@@ -88,7 +95,8 @@ const run = {
 
 const noclip = {
     names: ["noclip","nc","clip"],
-    action: (details, socket, players) => {
+    action: (args) => {
+        const  {details, socket, players} = args;
         return {
             response: "There's no where to clip here",
             receiver: socket.id

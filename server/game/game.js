@@ -8,7 +8,8 @@ class Game{
         this.parser = new CommandParser();
         this.server = server;
         this.server.on('connection', this.onSocketConnected);
-        this.server.on('disconnection', this.onSocketDisconnected)
+        this.server.on('disconnection', this.onSocketDisconnected);
+        this.levels = Levels;
     }
 
     onSocketConnected = (socket) => {
@@ -46,8 +47,9 @@ class Game{
             
             return this.addNewPlayer(command, socket)
         }
-
-        return command.action(command.description, socket, this.players);
+        const player = this.players.getPlayer(socket.id);
+        const playerRoom = this.getPlayersRoom(player);
+        return command.action({details: command.description, socket: socket, players: this.players, room: playerRoom});
     }
 
     addNewPlayer = (command, socket) => {
@@ -60,21 +62,25 @@ class Game{
             }
         }
 
-        const outcome = command.action(command.description, socket, this.players); // call command setPlayerName
+        const outcome = command.action({details: command.description, socket: socket, players: this.players}); // call command setPlayerName
         if(outcome.error){ return outcome; }
 
         //start game for user
         const player = this.players.getPlayer(socket.id);
         this.outputMessage(`Welcome ${player.name} to Level 0! You can stay in this unpleasant level or try to find a room you can ~noclip~ in.`, player.id)
         
-        const currentLevel = Levels[player.location.level];
-        const currentRoom = currentLevel.getRoom(player.location.room);
+        const playerRoom = this.getPlayersRoom(player);
         socket.join("level0"); // TODO: have user join based on actual level
         
         return {
-            response: currentRoom.description,
+            response: playerRoom.description,
             receiver: player.id,
         }
+    }
+
+    getPlayersRoom = (player) => {
+        const currentLevel = Levels[player.location.level];
+        return currentLevel.getRoom(player.location.room);
     }
 
     outputMessage = (message, id) => {

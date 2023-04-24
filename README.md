@@ -4,7 +4,7 @@ First open terminal and go to the server directory. Run these commands:
 
 npm install
 
-PORT=8000 node index.js
+npm run server
 
 In a Second terminal go to the client/chat directory. Run these commands:
 
