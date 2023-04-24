@@ -10,7 +10,7 @@ const level0 = {
         {
             "id": "1",
             "type":"room",
-            "connectedTo": ["2","3"],
+            "connectedTo": ["0","2","3"],
             "description": "It's the same room over and over and over...You think you hear something move in a near by room. ~Look~ around?",
             "look": "A room to the left (~move 2~) and a room to the right (~move 3~)"
         },
@@ -23,7 +23,7 @@ const level0 = {
         },
         {
             "id": "3",
-            "type": "end",
+            "type": "noclip",
             "connectedTo": ["1"],
             "description": "The same room as the last. Something feels off.",
             "look": "The wallpaper is moist. The pattern is non-euclidean...a place to ~noclip~?"

@@ -39,6 +39,14 @@ class Player{
       room: 0
     }
   }
+
+  setRoom(roomId){
+    this.location.room = roomId;
+  }
+
+  setLevel(levelId){
+    this.location.level = levelId;
+  }
 }
 
 module.exports = { Players, Player };

@@ -1,6 +1,6 @@
 const { Players, Player } = require('./players');
-const CommandParser = require('../commandParser');
-const Levels = require('./levelBuilder');
+const CommandParser = require('./commandParser');
+const {Levels, Level} = require('./levelBuilder');
 
 class Game{
     constructor(server) {
@@ -48,8 +48,8 @@ class Game{
             return this.addNewPlayer(command, socket)
         }
         const player = this.players.getPlayer(socket.id);
-        const playerRoom = this.getPlayersRoom(player);
-        return command.action({details: command.description, socket: socket, players: this.players, room: playerRoom});
+        const playerLevel = this.getLevelPlayerIsOn(player);
+        return command.action({details: command.description, socket: socket, player: player, players: this.players, level: playerLevel});
     }
 
     addNewPlayer = (command, socket) => {
@@ -79,8 +79,12 @@ class Game{
     }
 
     getPlayersRoom = (player) => {
-        const currentLevel = Levels[player.location.level];
-        return currentLevel.getRoom(player.location.room);
+        const playerLevel = this.getLevelPlayerIsOn(player);
+        return playerLevel.getRoomPlayerIsIn(player);
+    }
+
+    getLevelPlayerIsOn = (player) => {
+        return Levels[player.location.level];
     }
 
     outputMessage = (message, id) => {

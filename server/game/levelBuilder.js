@@ -13,11 +13,15 @@ class Level {
     getRoom = (roomId) => {
         return this.rooms.get(String(roomId));
     }
+
+    getRoomPlayerIsIn = (player) => {
+        return this.getRoom(player.location.room);
+    }
 }
 
 const Levels = levelsJson.map((levelJson) => {
     return new Level(levelJson);
 })
 
-module.exports = Levels;
+module.exports = {Levels, Level};
 

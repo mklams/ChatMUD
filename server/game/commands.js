@@ -1,4 +1,5 @@
-const {Players, Player } = require('./game/players')
+const {Players, Player } = require('./players')
+const {Level} = require('./levelBuilder')
 
 // TODO: Pass in args for action parameters
 
@@ -50,11 +51,11 @@ const speakTo = {
 
 const help = {
     names: ["help","?"],
-    action: (dargs) => {
-        const  {details, socket, players} = args;
+    action: (args) => {
+        const  {details, player} = args;
         return {
             response: "Enter a command in the form <action> <description>",
-            receiver: socket.id
+            receiver: player.id
         }
     }
 }
@@ -62,18 +63,22 @@ const help = {
 const move = {
     names: ["move","m","go"],
     action: (args) => {
-        const  {details, socket, players, room} = args;
-        if(room.connectedTo.length == 1){
-            const nextRoom = room.connectedTo[0];
+        const  {details, player, level} = args;
+        const currentRoom = level.getRoomPlayerIsIn(player);
+        if(currentRoom.connectedTo.length == 1){
+            const nextRoomId = currentRoom.connectedTo[0];
+            const nextRoom = level.getRoom(nextRoomId);
+            // TODO: Commands should not handle moving the player
+            player.setRoom(nextRoomId);
             
             return {
-                response: "You moved",
-                receiver: socket.id
+                response: nextRoom.description,
+                receiver: player.id
             }
         }
         return {
-            response: "You moved",
-            receiver: socket.id
+            response: "You didn't move",
+            receiver: player.id
         }
     }
 }
@@ -81,21 +86,28 @@ const move = {
 const look = {
     names: ["look","l","what"],
     action: (args) => {
-        const  {details, socket, players, room} = args;
+        const  {details, player, level} = args;
+        const room = level.getRoomPlayerIsIn(player);
         return {
             response: room.look,
-            receiver: socket.id
+            receiver: player.id
         }
     }
 }
 
 const run = {
     names: ["run","r"],
-    action: (dargs) => {
-        const  {details, socket, players} = args;
+    action: (args) => {
+        const  {details, player, level} = args;
+        const currentRoom = level.getRoomPlayerIsIn(player);
+        const connectedRoomIds = currentRoom.connectedTo;
+        const nextRoomId = connectedRoomIds[Math.floor(Math.random() * connectedRoomIds.length)];
+        const nextRoom = level.getRoom(nextRoomId);
+        // TODO: Commands should not handle moving the player
+        player.setRoom(nextRoomId);
         return {
-            response: "Run away!",
-            receiver: socket.id
+            response: nextRoom.description,
+            receiver: player.id
         }
     }
 }
@@ -103,10 +115,17 @@ const run = {
 const noclip = {
     names: ["noclip","nc","clip"],
     action: (args) => {
-        const  {details, socket, players} = args;
+        const  {details, socket, player, level} = args;
+        const currentRoom = level.getRoomPlayerIsIn(player);
+        if(currentRoom.type == "noclip"){
+            return {
+                response: "You clip out of the room to the next level.",
+                receiver: player.id
+            }
+        }
         return {
             response: "There's no where to clip here",
-            receiver: socket.id
+            receiver: player.id
         }
     }
 }
