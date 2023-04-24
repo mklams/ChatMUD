@@ -62,8 +62,15 @@ const help = {
 const move = {
     names: ["move","m","go"],
     action: (args) => {
-        // TODO: parse details and move actor
-        const  {details, socket, players} = args;
+        const  {details, socket, players, room} = args;
+        if(room.connectedTo.length == 1){
+            const nextRoom = room.connectedTo[0];
+            
+            return {
+                response: "You moved",
+                receiver: socket.id
+            }
+        }
         return {
             response: "You moved",
             receiver: socket.id
@@ -74,9 +81,9 @@ const move = {
 const look = {
     names: ["look","l","what"],
     action: (args) => {
-        const  {details, socket, players} = args;
+        const  {details, socket, players, room} = args;
         return {
-            response: "Nothing to see here",
+            response: room.look,
             receiver: socket.id
         }
     }
