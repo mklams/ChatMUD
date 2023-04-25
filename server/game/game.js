@@ -1,6 +1,6 @@
 const { Players, Player } = require('./players');
 const CommandParser = require('./commandParser');
-const {Levels, Level} = require('./levelBuilder');
+const {Levels, Level} = require('./level');
 
 class Game{
     constructor(server) {

@@ -1,5 +1,5 @@
 const {Players, Player } = require('./players')
-const {Level} = require('./levelBuilder')
+const {Level} = require('./level')
 
 // TODO: Pass in args for action parameters
 
@@ -65,6 +65,9 @@ const move = {
     action: (args) => {
         const  {details, player, level} = args;
         const currentRoom = level.getRoomPlayerIsIn(player);
+
+        // TODO: Move to own function
+        // If only 1 connected room move the player to it
         if(currentRoom.connectedTo.length == 1){
             const nextRoomId = currentRoom.connectedTo[0];
             const nextRoom = level.getRoom(nextRoomId);
@@ -76,8 +79,25 @@ const move = {
                 receiver: player.id
             }
         }
+
+        // handle commands with details
+        const adjacentRoomNames = level.getRoomNames(currentRoom.connectedTo);
+        const inputRoomName = details.toLowerCase();
+        if(adjacentRoomNames.includes(inputRoomName)){
+            const nextRoomId = level.getRoomId(inputRoomName);
+            const nextRoom = level.getRoom(nextRoomId);
+            // TODO: Commands should not handle moving the player
+            player.setRoom(nextRoomId);
+
+            return {
+                response: nextRoom.description,
+                receiver: player.id
+            }
+        }
+
+        // invalid details
         return {
-            response: "You didn't move",
+            response: `${details} is not a place to move.`,
             receiver: player.id
         }
     }
@@ -90,6 +110,21 @@ const look = {
         const room = level.getRoomPlayerIsIn(player);
         return {
             response: room.look,
+            receiver: player.id
+        }
+    }
+}
+
+const where = {
+    names: ["where","whereTo"],
+    action: (args) => {
+        const {details, player, level} = args;
+        const currentRoom = level.getRoomPlayerIsIn(player);
+        const adjacentRoomNames = level.getRoomNames(currentRoom.connectedTo);
+        const output = adjacentRoomNames.join(" or ");
+
+        return {
+            response: `You could ~move~ to ${output}.`,
             receiver: player.id
         }
     }
@@ -130,6 +165,6 @@ const noclip = {
     }
 }
 
-const commands = [setPlayerName, speak, speakTo, help, move, look, run, noclip];
+const commands = [setPlayerName, speak, speakTo, help, move, look, where, run, noclip];
 
 module.exports = commands;
