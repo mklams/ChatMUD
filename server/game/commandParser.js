@@ -7,6 +7,7 @@ class CommandParser{
             return {
                 response: "Input must be of <action> <description>",
                 receiver: socket.id,
+                event: Events.chatMessage,
                 error: true
             }
         }
@@ -16,6 +17,7 @@ class CommandParser{
             return {
                 response: "Invalid command",
                 receiver: socket.id,
+                event: Events.chatMessage,
                 error: true
             }
         }

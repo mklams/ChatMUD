@@ -1,5 +1,6 @@
 const {Players, Player } = require('./players')
 const {Level} = require('./level')
+const {Events} = require('./events')
 
 // TODO: Pass in args for action parameters
 
@@ -11,13 +12,15 @@ const setPlayerName = {
             return {
                 error: true,
                 response: "Name already taken.",
-                receiver: socket.id
+                receiver: socket.id,
+                event: Events.chatMessage,
             }
         }
         players.addPlayer(socket.id, details);
         return {
             response: `Player ${details} has joined the backrooms.`,
-            receiver: "main room"
+            receiver: "main room",
+            event:Events.chatMessage,
         }
 
     }
@@ -30,7 +33,8 @@ const speak = {
         const userName = players.getPlayerName(socket.id);
         return {
             response: userName + ": " + details,
-            receiver: "main room"
+            receiver: "main room",
+            event:Events.chatMessage
         }
     }
 }
@@ -44,7 +48,8 @@ const speakTo = {
         const receiverId = players.getId(receiverName);
         return {
             response: userName + ": (private)  " + splitMessage.join(" "),
-            receiver: receiverId
+            receiver: receiverId,
+            event:Events.chatMessage
         }
     }
 }
@@ -55,7 +60,8 @@ const help = {
         const  {details, player} = args;
         return {
             response: "Enter a command in the form <action> <description>",
-            receiver: player.id
+            receiver: player.id,
+            event:Events.chatMessage
         }
     }
 }
@@ -76,7 +82,8 @@ const move = {
             
             return {
                 response: nextRoom.description,
-                receiver: player.id
+                receiver: player.id,
+                event:Events.chatMessage
             }
         }
 
@@ -91,14 +98,16 @@ const move = {
 
             return {
                 response: nextRoom.description,
-                receiver: player.id
+                receiver: player.id,
+                event:Events.chatMessage
             }
         }
 
         // invalid details
         return {
             response: `${details} is not a place to move.`,
-            receiver: player.id
+            receiver: player.id,
+            event:Events.chatMessage
         }
     }
 }
@@ -110,7 +119,8 @@ const look = {
         const room = level.getRoomPlayerIsIn(player);
         return {
             response: room.look,
-            receiver: player.id
+            receiver: player.id,
+            event:Events.chatMessage
         }
     }
 }
@@ -125,7 +135,8 @@ const where = {
 
         return {
             response: `You could ~move~ to ${output}.`,
-            receiver: player.id
+            receiver: player.id,
+            event:Events.chatMessage
         }
     }
 }
@@ -142,7 +153,8 @@ const run = {
         player.setRoom(nextRoomId);
         return {
             response: nextRoom.description,
-            receiver: player.id
+            receiver: player.id,
+            event:Events.chatMessage
         }
     }
 }
@@ -155,12 +167,14 @@ const noclip = {
         if(currentRoom.type == "noclip"){
             return {
                 response: "You clip out of the room to the next level.",
-                receiver: player.id
+                receiver: player.id,
+                event:Events.chatMessage
             }
         }
         return {
             response: "There's no where to clip here",
-            receiver: player.id
+            receiver: player.id,
+            event:Events.chatMessage
         }
     }
 }

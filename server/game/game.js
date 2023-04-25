@@ -1,6 +1,8 @@
+const {Events} = require('./events');
 const { Players, Player } = require('./players');
 const CommandParser = require('./commandParser');
 const {Levels, Level} = require('./level');
+
 
 class Game{
     constructor(server) {
@@ -14,7 +16,7 @@ class Game{
 
     onSocketConnected = (socket) => {
         this.onUserJoin(socket);
-        socket.on('chat message', (msg) => this.onPlayerInput(msg, socket));
+        socket.on(Events.chatMessage, (msg) => this.onPlayerInput(msg, socket));
     }
 
     onSocketDisconnected = (socket) => {
@@ -23,11 +25,11 @@ class Game{
 
     onPlayerInput = (message, socket) => {
         const parsedMessage = this.handleInput(message, socket);
-        this.server.to(parsedMessage.receiver).emit('chat message', parsedMessage.response);
+        this.server.to(parsedMessage.receiver).emit(parsedMessage.event, parsedMessage.response);
     }
 
     onUserJoin = (socket) => {
-        socket.emit('chat message', "You decided to come here? That was an unfortunate decision. Well, what's your name? (Use the command setPlayerName <your name> to set your name.)")
+        socket.emit(Events.chatMessage, "You decided to come here? That was an unfortunate decision. Well, what's your name? (Use the command setPlayerName <your name> to set your name.)")
     }
 
     addPlayer = (id, name) => {
@@ -54,10 +56,11 @@ class Game{
 
     addNewPlayer = (command, socket) => {
         if ( command.error ) { return command; } // command is already bad
-        if(!this.parser.isCommandName("setplayername", command)){
+        if(!this.parser.isCommandName("setplayername", command)){ // TODO: indirect coupling to command name
             return {
                 response: "I need to know your name so I can forget you once you're lost. Use the command setPlayerName <your name>.",
                 receiver: socket.id,
+                event: Events.chatMessage,
                 error: true
             }
         }
@@ -75,6 +78,7 @@ class Game{
         return {
             response: playerRoom.description,
             receiver: player.id,
+            event:Events.chatMessage,
         }
     }
 
