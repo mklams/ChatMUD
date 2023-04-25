@@ -116,7 +116,7 @@ const look = {
 }
 
 const where = {
-    names: ["where","whereTo"],
+    names: ["where","whereto"],
     action: (args) => {
         const {details, player, level} = args;
         const currentRoom = level.getRoomPlayerIsIn(player);

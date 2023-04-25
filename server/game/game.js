@@ -56,7 +56,7 @@ class Game{
         if ( command.error ) { return command; } // command is already bad
         if(!this.parser.isCommandName("setplayername", command)){
             return {
-                response: "I need to know your name so I can forget you once you're lost. (Use the command setPlayerName <your name>.)",
+                response: "I need to know your name so I can forget you once you're lost. Use the command setPlayerName <your name>.",
                 receiver: socket.id,
                 error: true
             }
