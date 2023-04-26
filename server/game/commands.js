@@ -93,13 +93,12 @@ const move = {
         if(adjacentRoomNames.includes(inputRoomName)){
             const nextRoomId = level.getRoomId(inputRoomName);
             const nextRoom = level.getRoom(nextRoomId);
-            // TODO: Commands should not handle moving the player
-            player.setRoom(nextRoomId);
 
             return {
                 response: nextRoom.description,
                 receiver: player.id,
-                event:Events.chatMessage
+                event:Events.chatMessage,
+                moveTo: nextRoomId
             }
         }
 
@@ -131,10 +130,10 @@ const where = {
         const {details, player, level} = args;
         const currentRoom = level.getRoomPlayerIsIn(player);
         const adjacentRoomNames = level.getRoomNames(currentRoom.connectedTo);
-        const output = adjacentRoomNames.join(" or ");
+        const output = adjacentRoomNames.join("\" or \"");
 
         return {
-            response: `You could ~move~ to ${output}.`,
+            response: `You could \"move\"to \"${output}\".`,
             receiver: player.id,
             event:Events.chatMessage
         }
@@ -149,12 +148,12 @@ const run = {
         const connectedRoomIds = currentRoom.connectedTo;
         const nextRoomId = connectedRoomIds[Math.floor(Math.random() * connectedRoomIds.length)];
         const nextRoom = level.getRoom(nextRoomId);
-        // TODO: Commands should not handle moving the player
-        player.setRoom(nextRoomId);
+
         return {
             response: nextRoom.description,
             receiver: player.id,
-            event:Events.chatMessage
+            event:Events.chatMessage,
+            moveTo: nextRoomId
         }
     }
 }

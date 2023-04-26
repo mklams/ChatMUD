@@ -24,8 +24,14 @@ class Game{
     }
 
     onPlayerInput = (message, socket) => {
-        const parsedMessage = this.handleInput(message, socket);
-        this.server.to(parsedMessage.receiver).emit(parsedMessage.event, parsedMessage.response);
+        const output = this.handleInput(message, socket);
+        if(output.moveTo){
+            const player = this.players.getPlayer(socket.id);
+            player.setRoom(output.moveTo);
+            const room = this.getPlayersRoom(player);
+            socket.emit(Events.newRoom,room.imgUrl);
+        }
+        this.server.to(output.receiver).emit(output.event, output.response);
     }
 
     onUserJoin = (socket) => {
