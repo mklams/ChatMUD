@@ -2,7 +2,12 @@ import React, {useState, useEffect, ChangeEvent} from 'react';
 import {socket} from '../socket';
 import styled from 'styled-components'
 
-export default function TextInput(){
+
+interface TextInputProps{
+  onInput: (input: string) => void;
+}
+
+export default function TextInput(props: TextInputProps){
     const [userInput, setUserInput] = useState("");
 
     const handleUserInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -11,6 +16,7 @@ export default function TextInput(){
 
     const sendMessage = (event: React.FormEvent) => {
         event.preventDefault();
+        props.onInput(userInput);
         socket.emit('chat message', userInput);
         setUserInput("");
       }

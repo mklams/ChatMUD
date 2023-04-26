@@ -16,23 +16,31 @@ export default function ChatWindow(){
       }, []);
 
     useEffect(() => {
-        // scroll to bottom every time messages change
+        // scroll to bottom of chat window when a message comes in
         bottomRef.current?.scrollIntoView({behavior: 'smooth'})
     }, [messages]);
 
     const onGetChatMessage = (msg: string) => {
-        setMessages(oldMessages => [
-          ...oldMessages,
-          msg
-        ])
-       
-      } 
+      addMessage(msg);   
+    } 
+
+    const addMessage = (msg: string) => {
+      setMessages(oldMessages => [
+        ...oldMessages,
+        msg
+      ])
+    }
 
     const showMessages = () =>{
         return messages.map((message) => {
             return <li>{message}</li>
         })
     }
+
+    const onInput = (input:string) => {
+      addMessage(input)
+    }
+    
 
     return (
         <Chat>
@@ -41,7 +49,7 @@ export default function ChatWindow(){
                 <div ref={bottomRef} />
             </Terminal>
             <KeyboardInput>
-              <TextInput />
+              <TextInput onInput={onInput} />
             </KeyboardInput>
         </Chat>
     );
