@@ -3,12 +3,12 @@ const { Players, Player } = require('./players');
 const CommandParser = require('./commandParser');
 const {Levels, Level} = require('./level');
 
-
 class Game{
-    constructor(server) {
-        this.players = new Players();
+    constructor(server, database) {
+        this.activePlayers = new Players();
         this.parser = new CommandParser();
         this.server = server;
+        this.database = database;
         this.server.on('connection', this.onSocketConnected);
         this.server.on('disconnection', this.onSocketDisconnected);
         this.levels = Levels;
@@ -20,15 +20,16 @@ class Game{
     }
 
     onSocketDisconnected = (socket) => {
-        //this.server.to(socket.id).emit('chat message', "Bye");
+        this.activePlayers.removePlayer(socket.id);
     }
 
-    onPlayerInput = (message, socket) => {
-        const output = this.handleInput(message, socket);
+    onPlayerInput = async (message, socket) => {
+        const output = await this.handleInput(message, socket);
         if(output.moveTo){
-            const player = this.players.getPlayer(socket.id);
+            const player = this.activePlayers.getPlayer(socket.id);
             player.setRoom(output.moveTo);
             const room = this.getPlayersRoom(player);
+            await this.database.setPlayerLocation(player);
             socket.emit(Events.newRoom,room.imgUrl);
         }
         this.server.to(output.receiver).emit(output.event, output.response);
@@ -39,28 +40,29 @@ class Game{
     }
 
     addPlayer = (id, name) => {
-        this.players.addPlayer(id, name);
+        this.activePlayers.addPlayer(id, name);
     }
 
     isNewPlayer = (socket) => {
-        return !this.players.doesPlayerExist(socket.id);
+        return !this.activePlayers.doesPlayerExist(socket.id);
     }
 
-    handleInput = (input, socket) => {
+    handleInput = async (input, socket) => {
         
         const command = this.parser.parseMessage(input, socket);
         if ( command.error ) { return command; }
 
         if(this.isNewPlayer(socket)) {
             
-            return this.addNewPlayer(command, socket)
+            return await this.addNewPlayer(command, socket)
         }
-        const player = this.players.getPlayer(socket.id);
+        const player = this.activePlayers.getPlayer(socket.id);
+        
         const playerLevel = this.getLevelPlayerIsOn(player);
-        return command.action({details: command.description, socket: socket, player: player, players: this.players, level: playerLevel});
+        return command.action({details: command.description, socket: socket, player: player, players: this.activePlayers, level: playerLevel});
     }
 
-    addNewPlayer = (command, socket) => {
+    addNewPlayer = async (command, socket) => {
         if ( command.error ) { return command; } // command is already bad
         if(!this.parser.isCommandName("setplayername", command)){ // TODO: indirect coupling to command name
             return {
@@ -71,20 +73,30 @@ class Game{
             }
         }
 
-        const outcome = command.action({details: command.description, socket: socket, players: this.players}); // call command setPlayerName
+        const outcome = command.action({details: command.description, socket: socket, players: this.activePlayers}); // call command setPlayerName
         if(outcome.error){ return outcome; }
 
+        const player = this.activePlayers.getPlayer(socket.id);
+        const existingPlayer = await this.database.doesPlayerExist(player);
+        if(!existingPlayer){
+            await this.database.addPlayerToDatabase(player);
+        }
+        const savedPlayerLocation = await this.database.getPlayerLocationFromDatabase(player);
+        player.location = savedPlayerLocation;
+        await this.database.setPlayerLocation(player);
+
         //start game for user
-        const player = this.players.getPlayer(socket.id);
-        this.outputMessage(`Welcome ${player.name} to Level 0! You can stay in this unpleasant level or try to find a room you can ~noclip~ in.`, player.id)
+        // TODO: Identify new users and give them a welcome message
+       // this.outputMessage(`Welcome ${player.name} to Level 0! You can stay in this unpleasant level or try to find a room you can ~noclip~ in.`, player.id)
         
         const playerRoom = this.getPlayersRoom(player);
-        socket.join("level0"); // TODO: have user join based on actual level
+        socket.join(`level:${player.location.level}`); // TODO: have user join based on actual level
         
         return {
             response: playerRoom.description,
             receiver: player.id,
             event:Events.chatMessage,
+            moveTo: playerRoom.id
         }
     }
 

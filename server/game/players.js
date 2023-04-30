@@ -1,28 +1,32 @@
 class Players{
-  playerNames = {};
+  players = {};
 
   addPlayer(id, name) {
     const newPlayer = new Player(id, name);
-    this.playerNames[id] = newPlayer;
+    this.players[id] = newPlayer;
     return newPlayer;
   }
 
   getPlayer(id) {
-    return this.playerNames[id];
+    return this.players[id];
+  }
+
+  removePlayer(id){
+    this.players[id] = null;
   }
 
   doesPlayerExist(id){
-    return !!this.playerNames[id];
+    return !!this.players[id];
   }
 
   getPlayerName (id) {
-    return this.playerNames[id];
+    return this.players[id];
   }
 
   getId(name){
-    for(var id in this.playerNames)
+    for(var id in this.players)
     {
-      if(this.playerNames[id] == name){
+      if(this.players[id] == name){
         return id;
       }
     }
