@@ -23,16 +23,21 @@ class Game{
         this.activePlayers.removePlayer(socket.id);
     }
 
+    // TODO: Client does not wait on result which could lead to race conditions
     onPlayerInput = async (message, socket) => {
         const output = await this.handleInput(message, socket);
         if(output.moveTo){
-            const player = this.activePlayers.getPlayer(socket.id);
-            player.setRoom(output.moveTo);
-            const room = this.getPlayersRoom(player);
-            await this.database.setPlayerLocation(player);
-            socket.emit(Events.newRoom,room.imgUrl);
+            this.movePlayerToRoom(output.moveTo, socket);
         }
         this.server.to(output.receiver).emit(output.event, output.response);
+    }
+
+    movePlayerToRoom = async (roomId, socket) => {
+        const player = this.activePlayers.getPlayer(socket.id);
+        player.setRoom(roomId);
+        const room = this.getPlayersRoom(player);
+        await this.database.setPlayerLocation(player);
+        socket.emit(Events.newRoom,room.imgUrl);
     }
 
     onUserJoin = (socket) => {
@@ -52,8 +57,7 @@ class Game{
         const command = this.parser.parseMessage(input, socket);
         if ( command.error ) { return command; }
 
-        if(this.isNewPlayer(socket)) {
-            
+        if(this.isNewPlayer(socket)) {       
             return await this.addNewPlayer(command, socket)
         }
         const player = this.activePlayers.getPlayer(socket.id);

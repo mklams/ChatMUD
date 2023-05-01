@@ -3,6 +3,7 @@ const { createClient, SchemaFieldTypes } = require('redis');
 class Database{
     database = null;
 
+    // TODO: Make this a singleton
     async setupDatabase(){
         const database = createClient();
         database.on('error', err => console.log('Redis Client Error', err));
