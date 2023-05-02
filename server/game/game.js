@@ -26,13 +26,18 @@ class Game{
     onPlayerInput = async (message, socket) => {
         const output = await this.handleInput(message, socket);
         if(output.moveTo){
-            const player = this.activePlayers.getPlayer(socket.id);
-            player.setRoom(output.moveTo);
-            const room = this.getPlayersRoom(player);
-            await this.database.setPlayerLocation(player);
-            socket.emit(Events.newRoom,room.imgUrl);
+            await this.movePlayerToRoom(output, socket);
         }
         this.server.to(output.receiver).emit(output.event, output.response);
+    }
+
+    async movePlayerToRoom(actionResult, socket){
+        // TODO: Start any events from the new room (i.e. monster kill clock)
+        const player = this.activePlayers.getPlayer(socket.id);
+        player.setRoom(actionResult.moveTo);
+        const room = this.getPlayersRoom(player);
+        await this.database.setPlayerLocation(player);
+        socket.emit(Events.newRoom,room.imgUrl);
     }
 
     onUserJoin = (socket) => {
@@ -90,7 +95,7 @@ class Game{
        // this.outputMessage(`Welcome ${player.name} to Level 0! You can stay in this unpleasant level or try to find a room you can ~noclip~ in.`, player.id)
         
         const playerRoom = this.getPlayersRoom(player);
-        socket.join(`level:${player.location.level}`); // TODO: have user join based on actual level
+        socket.join(`level:${player.location.level}`);
         
         return {
             response: playerRoom.description,

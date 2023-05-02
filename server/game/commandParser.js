@@ -1,4 +1,5 @@
 const commands = require('./commands'); 
+const {Events} = require('./events');
 
 class CommandParser{
     parseMessage(msg, socket) {

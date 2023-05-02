@@ -22,7 +22,6 @@ const setPlayerName = {
             receiver: "main room",
             event:Events.chatMessage,
         }
-
     }
 }
 
