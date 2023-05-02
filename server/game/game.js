@@ -23,6 +23,7 @@ class Game{
         this.activePlayers.removePlayer(socket.id);
     }
 
+    // TODO: Client does not wait on result which could lead to race conditions
     onPlayerInput = async (message, socket) => {
         const output = await this.handleInput(message, socket);
         if(output.moveTo){
@@ -57,8 +58,7 @@ class Game{
         const command = this.parser.parseMessage(input, socket);
         if ( command.error ) { return command; }
 
-        if(this.isNewPlayer(socket)) {
-            
+        if(this.isNewPlayer(socket)) {       
             return await this.addNewPlayer(command, socket)
         }
         const player = this.activePlayers.getPlayer(socket.id);
